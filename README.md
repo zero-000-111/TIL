@@ -7,3 +7,5 @@
 
 
 &nbsp;&nbsp; [2021-8-12 머신러닝 스터디](./ML_study_python/numpy_pandas_basics.md)
+
+&nbsp;&nbsp; [2021-8-13 머신러닝 스터디](./ML_study_python/scikit_learn_basics.md)
