@@ -62,3 +62,102 @@ TP/(FN+TP)
     pred=lr_clf.predict(X_test)
     get_clf_eval(y_test,pred)
 ```
+* 정밀도/재현율 트레이드오프
+
+> 분류의 결정 임계값 (Threshold)을 조정해 정밀도/ 재현율 수치 조절 가능 (하나를 강제로 높이면 다른 하나의 수치가 떨어질 수 있음)
+
+```
+    * predict_proba() : 개별 데이터 별로 예측 확률을 반환
+
+    pred_proba = Ir_clof.predict_proba(X_test)
+    pred = Ir_clf.predict(X_test)
+    
+    pred_proba[:3]
+->  Output: [[class0prob, class1prob]   
+             [class0prob, class1prob]
+             [class0prob, class1prob]] 
+             # predict() 메서드는 두 prob 중 큰 쪽으로 예측 (임계값 : 0.5)
+             # predict() 메서드는 predict_proba() 메서드를 기반해 생성된 API
+    pred_proba_result = np.concatenate([pred_proba,pred.reshape(-1,1),axis=1])
+```
+*  Binarizer 클라스
+```
+    from sklearn.preprocessing import Binarizer
+
+    X=[[1, -1, 2], [2, 0, 0],[0,1.1 ,1.2]]
+    binarizer = Binarizer(threshold=1.1)
+    # 임계값 1.1로 설정 -> 넘으면 1 못 넘으면 0
+
+    binarizer.fit_transform(X)
+```
+* precision_recall_curve() : 임계값별 평가 지표
+```
+    from sklearn.metrics import precision_recall_curve
+
+    # 레이블 값이 1일 때의 예측 확률 추출
+    pred_proba_class1 = Ir_clf.predict_proba(X_test)[:,1]
+
+    precisions,recalls,thresolds = precision_recall_curve(y_test, pred_proba_class1)
+
+    # 반환된 임계값 배열 로우가 147건이므로 샘플로 10건만 추출하되, 임곗값을 15 Step으로 추출
+    thr_index = np.arange(0,thresold.shape[0],15)
+
+    # 샘플용 10개의 임곗값
+    np.round(thresolds[thr_index],3)
+
+    np.round(precisions[thr_index],3)
+    np.round(recalls[thr_index],3)
+```
+* 정밀도와 재현율 곡선 시각화
+```
+    import matplotlib.pyplot as plt
+    import matplotlib.ticker as ticker
+    %matplotlib inline
+
+    def precision_recall_curve_plot(y_test,pred_prob_c1):
+        precisions,recalls,thresolds=precision_recall_curve(y_test,pred_proba_c1)
+
+        plt.figure(figsize=(8,6))
+        thresold_boundary=thresolds.shape[0]
+        plt.plot(thresholds,precisions[0:threshold_boundary],linestyle='--',label='precision')
+        plt.plot(threshold,recalls[0:threshold_boundary],label='recall')
+
+        # threshold 값 X축의 Scalse을 0.1 단위로 변경
+        start,end=plt.xlim()
+        plt.xticks(np.round(np.arange(start,end,0.1),2))
+
+        plt.xlabel('Threshold value'); plt.ylabel('Precision and REcall value')
+        plt.legend();plt.grid()
+        plt.show()
+```
+* F1 score : 정밀도와 재현율을 결합한 지표
+```
+    F1 = 2/(1/recall)+(1/precision)
+    2 x (precision x recall)/(precision+recall)
+```
+```
+    from sklearn.metrics import f1_score
+    f1 = f1_score(y_test,pred)
+```
+* ROC(Receiver Operation Characteristic Curve) 곡선과 AUC
+ROC : FPR(False Postitive Rate)이 변할 때 TPR(True Positive Rate - 재현율/민감도)이 어떻게 변하는지를 나타내는 곡선
+
+TNR(True Negative Rate) : 실제값 Negative가 정확히 얘측돼야 하는 수준
+
+roc_curve()
+```
+    from sklearn.metrics import roc_curve
+
+    # 레이블 값이 1일때의 예측 확률을 추출
+    pred_proba_class1=Ir_clf.predict_proba(X_test)[:1]
+
+    fprs , tprs, thresholds = roc_curve(y_test, pred_proba_class1)
+    
+    # 반환된 임계값 배열에서 샘플로 데이터를 추출하되, 임곗값을 5 step으로 추출
+    thresholds[0]은 max(예측확률)+1로 임의 설정됨. 이를 제외하기 위해 np.arrange는 1부터 시작
+    thr_index = np.arange(1,thresholds.shpae[0],5)
+    np.round(fprs[thr_index],3)
+    np.round(tprs[thr_index],3) # 각 임계값별 반환값 추출
+```
+
+AUC(Area Under Curve) : ROC와 밑 면적을 구하는 것으로 1에 가까워 질수록 좋음, FPR이 작은 상태에서 얼마나 큰 TPR을 얻을 수 있을지가 관건
