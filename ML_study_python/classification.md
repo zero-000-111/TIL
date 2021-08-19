@@ -32,5 +32,5 @@ Parameter
 ```
 ### 결정 트리 모델의 시각화
 
-[결정모델 시각화](../jupyter_notebook/classification_viz_png)
+[결정모델 시각화](../jupyter_notebook/classification_viz.png)
 
