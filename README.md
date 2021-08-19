@@ -13,3 +13,5 @@
 &nbsp;&nbsp; [2021-8-13 머신러닝 스터디-evaluation_1](./ML_study_python/evaluations.md)
 
 &nbsp;&nbsp; [2021-8-16 머신러닝 스터디-evaluation_2](./ML_study_python/evaluations.md)
+
+&nbsp;&nbsp; [2021-8-19 머신러닝 스터디-classification_viz](./ML_study_python/classification.md)
