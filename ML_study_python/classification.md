@@ -34,3 +34,23 @@ Parameter
 
 [결정모델 시각화](../jupyter_notebook/classification_viz.png)
 
+
+### 결정 트리 과적합
+* DecisionTree_overfitting.ipynb
+* TIL(2021-8-20)
+```
+# 중복된 column_name 얼마나 있는지 확인 가능
+## column_index의 건수가 feature_dup_df에 적힘
+feature_dup_df = feature_name_df.groupby('column_name').count()
+## 적힌 개수가 2 이상, 즉 중복된 row의 개수 확인 
+feature_dup_df[feature_dup_df['column_index']>1].count()
+
+# 중복 피처명 대체하기
+def get_new_feature_name_df(old_feature_name_df):
+  feature_dup_df = pd.DataFrame(data=old_feature_name_df.groupby('column_name').cumcount(),columns=['dup_cnt']) # cumcount() : 중복된 컬럼을 축적하여 셈 0,1,2... 순으로
+  feature_dup_df=feature_dup_df.reset_index()
+  new_feature_name_df = pd.merge(old_feature_name_df.reset_index(), feature_dup_df,how='outer')
+  new_feature_name_df['column_name] = new_feature_name_df[['column_name','dup_cnt']].apply(lambda x: x[0]+'_'+str(x[1]) if x[1]>0 else x[0], axis=1)
+  new_feature_name_df =new_feature_name_df.drop(['index'],axis=1)
+  return new_reature_name_df
+```
