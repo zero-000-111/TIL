@@ -23,3 +23,9 @@
 
 
 &nbsp;&nbsp; [2021-8-23 머신러닝 스터디-Ensemble Learning](./ML_study_python/ensemble_learning.md)
+
+
+&nbsp;&nbsp; [2021-8-23 머신러닝 스터디-Random_Forest](./ML_study_python/random_forest.md)
+
+
+&nbsp;&nbsp; [2021-8-23 머신러닝 스터디-Boosting_algorithm](./ML_study_python/Boosting_algorithm.md)
