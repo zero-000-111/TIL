@@ -48,3 +48,32 @@ pred=gb_clf.predict(X_test)
     - eval_metric: 검증에 사용되는 함수 정의, default=회귀: rmse,분류: error
 * 조기 중단 파라미터: 50으로 설정하면 학습 수행 중 50회 반복 중에 학습 오류가 감소하지 않으면 부스팅을 조기 중단함
 
+## LightGBM
+- XGBoost에 비해 학습 시간 훨씬 짧음
+- 예측 성능에는 별다른 차이가 없음
+- 적은 데이터 세트에 적용할 경우 과적합이 발생하기 쉽다 (일반적으로 10,000건 이하의 데이터 세트)
+- 리프 중심 분할(Leaf Wise) 방식 사용: 트리의 균형을 맞추지 않고, 최대 손실 값을 가지는 리프 노드를 지속적으로 분할 (비대칭적ㅇ니 규칙 트리), 예측 오류 최소화 가능
+    - 균형 트리 분할(Level Wise): 최대한 균형 잡힌 트리를 유지하면서 분할하기 때문에 트리의 깊이가 최소화 될 수 있다. but, 균형을 맞추기 위한 시간이 필요하다
+
+### 하이퍼 파라미터
+: 리프 토드가 계속 분할되면서 트리의 깊이가 깊어지므로 이 특성에 맞는 하이퍼 파라미터 설정이 필요함
+
+- num_iterations[default=100]: 반복 수행하려는 트리의 개수(n_estimators와 같음, 사이킷런 호환 클래스에서 이 파라미터 사용 가능)
+- learning_rate[default=0.1]: 업데이트되는 학습률 값(learning rate와 같음)
+- max_depth[default=1]: 0보다 작은 값을 지정하면 깊이에 제한이 없다, leaf wise 기반이므로 깊이가 상대적으로 더 깊다
+- min_data_in_leaf[default=20]: 결정 트리의 min_samples_leaf와 같은 파라미터. 최종 결정 클래스인 리프 노드가 되기 위해서 최소한으로 필요한 레코드 수, 과적함 제어, impurity가 꼭 0이 아니더라도 분할을 멈출 수 있도록 하는 방식
+- num_leaves[default=31]: 하나의 트리가 가질 수 있는 최대 리프 개수
+- boosting[default=gbdt]: 부스팅의 트리를 생성하는 알고리즘 기술
+    - gbdt: 일반적인 그래디언트 부스팅 결정 트리
+    - rf: 랜덤 포레스트
+- bagging_fraction[default=1.0]: 트리가 커져서 과적합되는 것을 제어하기 위해서 데이터를 샘플링하는 비율 지정,(subsample과 같음)
+- feature_fraction[default=1.0]: 개별 트리를 학습할 때마다 무작위로 선택하는 피처의 비율, 과적합 방지를 위해 사용
+- lambda_l2[default=0.0]: L2 regulation 제어를 위한 값
+- lambda_l1[default=0.0]: L1 regulation 제어를 위한 값
+
+- Learning Task 파라미터
+    - objective: 최솟값을 가져야 할 손실함수 정의 (회귀, 다중 클래스 분류, 이진 분류에 따라서 지정)
+### 튜닝 방안
+- num_leaves, min_data_in_leaf, max_depth 조절을 통해 과적합 방지
+- 과적합 방지를 위해 reg_labda, reg_alpha(lambda_l1,lambda_l2)와 같은 regulation을 적용하거나 학습 샘플 수를 줄이기 위해 subsample, colsample_bytree (bagging_fraction, feature_function) 파라미터를 적용하는 방안 검토
+- learning_rate 작게, n_estimators 크게 함으로써 예측 성능 향상 (과적합 유의)

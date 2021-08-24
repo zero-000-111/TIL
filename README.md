@@ -29,3 +29,5 @@
 
 
 &nbsp;&nbsp; [2021-8-23 머신러닝 스터디-Boosting_algorithm](./ML_study_python/Boosting_algorithm.md)
+
+&nbsp;&nbsp; [2021-8-24 머신러닝 스터디-Boosting_algorithm_LightGBM](./ML_study_python/Boosting_algorithm.md)
