@@ -15,3 +15,4 @@ idx= df[(df['Age']<4) | (df['Age']>60)].index
 - np.random.randn: **가우시안 표준 정규 분포**에서 난수 matrix array 생성
 - np.random.shuffle: 기존의 데이터의 순서 바꾸기
 - np.random.choice: 기존의 데이터에서 샘플링
+- np.random.permutation: random.arange(int)를 셔플한 결괏값을 retrun, 데이터 샘플링할 때 활용
