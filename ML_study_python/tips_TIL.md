@@ -16,3 +16,7 @@ idx= df[(df['Age']<4) | (df['Age']>60)].index
 - np.random.shuffle: 기존의 데이터의 순서 바꾸기
 - np.random.choice: 기존의 데이터에서 샘플링
 - np.random.permutation: random.arange(int)를 셔플한 결괏값을 retrun, 데이터 샘플링할 때 활용
+
+## DataFrame 인덱싱
+- DF['column명']
+- DF.column명 # 이렇게도 인덱싱 됨

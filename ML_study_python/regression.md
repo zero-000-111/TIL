@@ -136,3 +136,62 @@ model = model.fit(X,y)
 
 - 일반적으로 편황과 분산은 한 쪽이 높아지면 한쪽이 낮아지는 경향이 있음, 편향을 낮추고 분산을 높이면서 전체 오류가 가장 낮아지는 '골디락스' 지점을 지나 분산이 지속적으로 높아져 전체 오류가 다시 높아짐
 - 따라서 편향과 분산을 트레이드오프하면서 전체 오류 값이 최저로 하는 모델을 구축할 필요가 있다
+## 규제 선형 모델 
+- 회귀 계수의 크기를 제어해 과적합 개선하고자 함
+- L1 방식: 라쏘회귀에서 적용됨, W의 절댓값에 대해 페널티를 부여함
+- L2 방식: 릿지회귀에서 적용됨, W의 제곱에 대해 페널티를 부여함
+
+- 릿지 회귀
+```
+from sklearn.linear_model import Ridge
+from sklearn.model_selection import cross_val_score
+
+# alpha=[0,0.1,1,10,100]으로 설정해 릿지 회귀 수행
+for alpha in alphas:
+    ridge = Ridge(alpha=alpha)
+    neg_mse_scores = cross_val_score(ridge, X_data, y_target,scoring="neg_mean_squared_error",cv=5)
+    rmse_scores=np.sqrt(-1*neg_mse_scores)
+    avg_rmse = np.mean(rmse_scores)
+```
+- 라쏘 회귀   
+L2 규제가 회귀 계수의 크기를 감소시키는 데 반해, L1 규제는 불필요한 회귀 계수를 급격하게 감소시켜 0으로 만들고 제거한다 (피처 선택의 기능)
+- 엘라스틱넷 회귀: L2 규제와 L1 규제를 결합한 회귀
+    - 라쏘 회귀는 중요 피처만을 셀렉하고 다른 피처들의 회귀를 0으로 만드는 성향이 있어 alpha 값에 따라 회귀 계수 값이 급격히 변동할 수 있어 L2 규제를 추가하여 보완한다.
+    - 다만, 수행시간이 상대적으로 오래 걸린다
+    - 엘라스틱넷의 규제: a*L1 + b*L2
+    - alpha: a+b
+    - l1_ration: a/(a+b)
+## 선형 회귀 모델을 위한 데이터 변환
+- 선형 회귀 모델은 일반적으로 피처와 타깃값 간에 선형의 관계가 있다고 가정
+- 피처값과 타깃값의 분포가 정규 분포 형태인 것을 매우 선호, 반대로 왜곡된 형태의 분포도 일 경우 예측 성능에 부정적인 영향을 미칠 수 있음
+- 따라서 데이터에 대한 스케일링/정규화 작업을 수행하는 것이 일반적
+    1. StandardScaler, MinMaxScaler를 이용한 정규화, 예측 성능 향상을 크게 기대하기 어려운 경우가 많음
+    2. 스케일링/정규화를 수행한 데이터 세트에 다시 다항 특성을 적용하여 변환하는 방법, 피처의 개수가 매우 많을 경우 다항 변환으로 생성되는 피처의 개수가 기하급수로 늘어나서 과적합 발생 가능
+    3. 원래 값에 log 함수를 적용하여 정규 분포에 가까운 형태로 값을 분호, 매우 자주 사용되는 변환 방법
+        - np.log1p(): 1+ log() {언더 플로우 방지를 위해 1 더해줌}
+## 로지스틱 회귀
+선형 회귀 방식을 분류에 적용한 알고리즘
+- 시그모이드 함수 최적선을 찾고 이 시그모이드 함수의 반환 값을 확률로 간주해 확률에 따라 분류
+```
+from sklearn.linear_model import LogisticRegression
+lr_clf=LogisticRegression
+lr_clf.fit(), lr_clf.predict() 로 구현
+```
+- 하이퍼 파라미터
+    - 'Penalty': 규제의 유형 지정, 'l1','l2'
+    - 'C': 규제 강도, 1/alpha, alpha 값의 역수로 값이 C값이 작을 수록 규제 강도가 커짐
+## 회귀 트리
+- 선형 회귀는 회귀 계수를 선형으로 결합하는 회귀 함수를 구해, 여기에 독립변수를 입력해 결괏값을 예측하는 것
+- 비선형 회귀 함수는 회귀 계수의 결합이 비선형
+- 트리 기반의 회귀는 회귀 트리를 이용하는 것
+        - 리프 노드에 속한 데이터 값의 평균값을 구해 회귀 예측값을 계산
+        - CART(Classification and Regression Trees) 알고리즘에 기반하고 이씩 때문에 (결정 트리, 랜덤 포레스트, GBM, XGBoost, LightGBM) 등의 모든 트리 기반의 알고리즘은 회귀도 가능
+     ```
+     알고리즘           회귀 Estimator 클래스
+    Decision Tree: DecisionTreeRegressor
+    Gradient Boosting: GradientBoostingRegressor
+    XGBoost: XGBRegressor
+    LightGBM: LGBMRegressor
+     ```
+     - 회귀 트리는 선형 회귀와 다른 처리 방식이므로 회귀 계수를 제공하는 coef_ 속성이 없음, 대신 feature_importances_를 이용해 피처별 중요도를 알 수 있음
+     - max_depth 파라미터 활용, 높을 수록 분할되는 데이터 지점이 많아져 더 많은 브랜치를 생성하고 이에 따라 계산 형태의 회귀선을 생성한다
