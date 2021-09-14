@@ -32,3 +32,13 @@ output:':000;'
     - class 선언시 초기에 넣을 값이 없을 경우
 - continue: 다음 루프로 넘어감
 - break: 반복문을 멈추고 밖으로 나감
+
+# 실수로 함수명을 변수로 설정했을 시 함수 호출 오류가 발생할 수 있음
+```
+sorted = [1,2,3,-23,423]
+lst = sorted([sorted])
+Error : 'list' object is not collable
+이 경우 변수 삭제후 새로운 변수 설정
+del sorted
+new = [1,2,3,-23,423]
+```
