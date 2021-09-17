@@ -35,3 +35,5 @@
 &nbsp;&nbsp; [2021-8-24 머신러닝 스터디-Regression](./ML_study_python/regression.md)   
 
 &nbsp;&nbsp; [2021-9-14 백준 풀이](./baekjoon_algorithm/2021_9_14.md)
+
+&nbsp;&nbsp; [2021-9-17 백준 풀이](./baekjoon_algorithm/2021_9_17.md)
