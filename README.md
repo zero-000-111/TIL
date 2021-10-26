@@ -37,3 +37,5 @@
 &nbsp;&nbsp; [2021-9-14 백준 풀이](./baekjoon_algorithm/2021_9_14.md)
 
 &nbsp;&nbsp; [2021-9-17 백준 풀이](./baekjoon_algorithm/2021_9_17.md)
+
+&nbsp;&nbsp; [2021-9-17 백준 풀이](./baekjoon_algorithm/2021_10_25.md)
